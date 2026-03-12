@@ -1,0 +1,4 @@
+if BOARD_TAPT
+config BOARD
+    default "tapt"
+endif
