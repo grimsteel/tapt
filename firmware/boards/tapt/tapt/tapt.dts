@@ -5,18 +5,22 @@
 	model = "Tapt PCB v0.1.0";
 	compatible = "tapt";
 
+	aliases {
+		status-led = &status_led;
+		limit-switch = &limit_switch;
+	};
+
 	chosen {
-		zephyr,console = &uart0;
-		zephyr,shell-uart = &uart0;
+		// zephyr,console = &uart0;
+		// zephyr,shell-uart = &uart0;
 		zephyr,sram = &sram0;
 		zephyr,flash = &flash0;
-		zephyr,code-partition = &slot0_partition;
 	};
 
 	leds {
 		compatible = "gpio-leds";
 
-		led0: status_led {
+		status_led: status_led {
 			gpios = <&gpio0 10 GPIO_ACTIVE_HIGH>;
 			label = "Green Status LED";
 		};
@@ -27,9 +31,20 @@
 
 		limit_switch: limit_switch {
 			label = "Limit Switch";
-			gpios = <&gpio0 4 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
-			zephyr,code = <INPUT_KEY_0>;
+			// onboard pullup
+			gpios = <&gpio0 4 GPIO_ACTIVE_LOW>;
 		};
+	};
+
+	vbatt {
+		compatible = "voltage-divider";
+		status = "okay";
+		// GPIO 6 / ADC 3
+		io-channels = <&adc 0>;
+		// 1M + 1M
+    output-ohms = <1000000>;
+    full-ohms = <(1000000 + 1000000)>;
+		power-gpios = <&gpio0 9 0>;
 	};
 };
 
@@ -37,7 +52,7 @@
 	regulator-initial-mode = <NRF5X_REG_MODE_DCDC>;
 };
 
-&pinctrl {
+/* &pinctrl {
   uart0_default: uart0_default {
 		group1 {
 			psels = <NRF_PSEL(UART_TX, 0, 6)>,
@@ -52,10 +67,24 @@
 			low-power-enable;
 		};
 	};
-};
+}; */
 
 &adc {
 	status = "okay";
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	channel@0 {
+		reg = <0>;
+		// max 2V, our dividers results in 1.85V
+		zephyr,gain = "ADC_GAIN_1_4";
+		zephyr,reference = "ADC_REF_INTERNAL";
+		zephyr,input-positive = <NRF_SAADC_AIN3>; // P0.05
+		// defaults from battery channel
+		zephyr,resolution = <14>;
+		zephyr,oversampling = <4>;
+		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_MICROSECONDS, 40)>;
+	};
 };
 
 &uicr {
@@ -64,45 +93,18 @@
 
 &gpiote {
 	status = "okay";
+	wakeup-source;
 };
 
 &gpio0 {
 	status = "okay";
 };
 
-&uart0 {
+/* &uart0 {
 	compatible = "nordic,nrf-uarte";
 	status = "disabled";
 	current-speed = <115200>;
 	pinctrl-0 = <&uart0_default>;
 	pinctrl-1 = <&uart0_sleep>;
 	pinctrl-names = "default", "sleep";
-};
-
-&flash0 {
-	partitions {
-		compatible = "fixed-partitions";
-		#address-cells = <1>;
-		#size-cells = <1>;
-
-		boot_partition: partition@0 {
-			label = "mcuboot";
-			reg = <0x00000000 0xc000>;
-		};
-
-		slot0_partition: partition@c000 {
-			label = "image-0";
-			reg = <0x0000C000 0xe000>;
-		};
-
-		slot1_partition: partition@1a000 {
-			label = "image-1";
-			reg = <0x0001a000 0xe000>;
-		};
-
-		storage_partition: partition@28000 {
-			label = "storage";
-			reg = <0x00028000 0x00008000>;
-		};
-	};
-};
+}; */
