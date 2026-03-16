@@ -10,6 +10,12 @@ menu "Zephyr"
 source "Kconfig.zephyr"
 endmenu
 
+config TAPT_DEVICE_ID
+    int "Tapt bluetooth advertisment ID"
+    default 0
+    help
+      Tapt unique device ID for Home Assistant identification. Relevant with multiple Tapt devices.
+
 module = APP
 module-str = APP
 source "subsys/logging/Kconfig.template.log_config"

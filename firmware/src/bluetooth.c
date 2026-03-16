@@ -12,6 +12,7 @@ LOG_MODULE_REGISTER(bluetooth, CONFIG_APP_LOG_LEVEL);
 typedef struct adv_mfg_data {
   uint16_t company_code; // Nordic Semiconductor
   uint16_t battery_level;
+  uint8_t device_id;
   bool pressed;
 } adv_mfg_data_t;
 
@@ -28,6 +29,7 @@ int bluetooth_advertise(int32_t battery_level, bool pressed) {
   const adv_mfg_data_t mfg_data = {
     .company_code = NORDIC_COMPANY_ID,
     .battery_level = battery_level,
+    .device_id = CONFIG_TAPT_DEVICE_ID,
     .pressed = pressed
   };
   
