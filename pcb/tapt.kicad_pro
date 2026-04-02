@@ -492,12 +492,12 @@
         "wire_width": 6
       },
       {
-        "clearance": 0.2,
+        "clearance": 0.1,
         "name": "Ant",
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "priority": 0,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
-        "track_width": 0.2939
+        "track_width": 0.1994
       }
     ],
     "meta": {
