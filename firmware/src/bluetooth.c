@@ -39,7 +39,7 @@ int bluetooth_advertise(int32_t battery_level, bool pressed) {
     BT_DATA(BT_DATA_MANUFACTURER_DATA, &mfg_data, sizeof(mfg_data))
   };
   int error;
-  if ((error = bt_le_adv_start(BT_LE_ADV_NCONN, ad, ARRAY_SIZE(ad), NULL, 0))) {
+  if ((error = bt_le_adv_start(BT_LE_ADV_NCONN_IDENTITY, ad, ARRAY_SIZE(ad), NULL, 0))) {
     LOG_ERR("Bluetooth advertise failed: %d", error);
     return error;
   }

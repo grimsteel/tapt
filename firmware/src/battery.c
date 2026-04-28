@@ -38,6 +38,7 @@ int battery_sensor_read(battery_sensor_t *battery_sensor, int32_t *value) {
   }
 
   *value = (int32_t) sensor_value_to_milli(&reading);
+  LOG_DBG("Read value %d from voltage divider", *value);
 
   return 0;
 }

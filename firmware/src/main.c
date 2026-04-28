@@ -33,7 +33,10 @@ int main(void) {
     return error;
   }
 
-  gpio_pin_set_dt(&status_led, 1); // turn on
+  // flash for 0.2s
+  gpio_pin_set_dt(&status_led, 1);
+  k_sleep(K_MSEC(200));
+  gpio_pin_set_dt(&status_led, 0);
 
   // configure button for wakeup
   const struct gpio_dt_spec limit_switch = GPIO_DT_SPEC_GET(DT_ALIAS(limit_switch), gpios);
@@ -43,7 +46,7 @@ int main(void) {
   }
 
   // apply cfg
-  if ((error = gpio_pin_configure_dt(&limit_switch, GPIO_OUTPUT_ACTIVE))) {
+  if ((error = gpio_pin_configure_dt(&limit_switch, GPIO_INPUT))) {
     LOG_ERR("Limit switch config error: %d", error);
     return error;
   }
@@ -69,7 +72,7 @@ int main(void) {
   if ((error = bluetooth_advertise(battery_level, button_pressed))) return error;
 
   // wait 1s then power off
-  k_sleep(K_MSEC(1000));
+  k_sleep(K_MSEC(500));
   
   if ((error = bluetooth_advertise_stop())) return error;
   power_off();
